@@ -1,6 +1,12 @@
+/*
+https://github.com/chakphanu/ThaiNationalIDCard
+*/
+
 const pcsclite = require('@pokusew/pcsclite')
 const pcsc = pcsclite()
 const utils = require('./utils')
+const DataURI = require('datauri')
+const datauri = new DataURI()
 
 const CMD_SELECT = [
   [0x00, 0xA4, 0x04, 0x00, 0x08, 0xA0, 0x00, 0x00, 0x00, 0x54, 0x48, 0x00, 0x01]
@@ -21,6 +27,34 @@ const CMD_ISSUE_EXPIRE = [
   [0x80, 0xb0, 0x01, 0x67, 0x02, 0x00, 0x12],
   [0x00, 0xc0, 0x00, 0x00, 0x12]
 ]
+
+const _CMD_GET_PHOTO = () => {
+  let cmds = []
+
+  for(let i=0; i<21; i++) {
+    let xwd
+    let xof = i * 254 + 379
+    if (i === 20) {
+      xwd = 38
+    }
+    else {
+      xwd = 254
+    }
+    const sp2 = (xof >> 8) & 0xff
+    const sp3 = xof & 0xff
+    const sp6 = xwd & 0xff
+    const spx = xwd & 0xff
+
+    cmds.push([
+      [0x80, 0xb0, sp2, sp3, 0x02, 0x00, sp6],
+      [0x00, 0xc0, 0x00, 0x00, spx]
+    ])
+  }
+
+  return cmds
+}
+
+const CMD_GET_PHOTO = _CMD_GET_PHOTO()
 
 pcsc.on('reader', reader => {
   console.log('New Reader Detected', reader.name)
@@ -50,7 +84,7 @@ pcsc.on('reader', reader => {
             return
           }
   
-          readAllData(reader, protocol)
+          readAllData(reader, protocol, true)
         })
       }, 500)
     }
@@ -72,6 +106,15 @@ const readAllData = async (reader, protocol, withPhoto = false) => {
     console.log(rawPersonalInfo)
     console.log(rawAddress)
     console.log(rawIssueExpire)
+
+    if(withPhoto) {
+      const rawPhoto = await readPhoto(reader, protocol)
+
+      const encodedData = datauri.format('.jpg', rawPhoto)
+      console.log(encodedData.content)
+    }
+    
+    console.log('done')
   } catch(e) {
     console.log(e)
   }
@@ -82,6 +125,22 @@ const readAllData = async (reader, protocol, withPhoto = false) => {
           return
       }
   })
+}
+
+const readPhoto = async (reader, protocol) => {
+  let bufferList = []
+  for(let i in CMD_GET_PHOTO) {
+    await transmit(reader, CMD_GET_PHOTO[i][0], protocol)
+
+    let result = await transmit(reader, CMD_GET_PHOTO[i][1], protocol)
+    if (result.length > 2) {
+      result = result.slice(0, -2)
+    }
+    bufferList.push(result)
+  }
+
+  const tempBuffer = Buffer.concat(bufferList)
+  return tempBuffer
 }
 
 const sendCommand = async (reader, command, protocol) => {
