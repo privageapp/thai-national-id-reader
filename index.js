@@ -1,11 +1,12 @@
-const pcsclite = require('@pokusew/pcsclite')
+const pcsclite = require('pcsclite')
 const { readData, STATUS } = require('./logics')
 const EventEmitter = require('events')
 
 const EVENTS = {
   PCSC_INITIAL: 'PCSC_INITIAL',
-  PCSC_ERROR: 'PCSC_ERROR',
+  PCSC_CLOSE: 'PCSC_CLOSE',
 
+  DEVICE_WAITING: 'DEVICE_WAITING',
   DEVICE_CONNECTED: 'DEVICE_CONNECTED',
   DEVICE_ERROR: 'DEVICE_ERROR',
   DEVICE_DISCONNECTED: 'DEVICE_DISCONNECTED',
@@ -34,88 +35,111 @@ class ThaiCardReader extends EventEmitter {
     super(...args)
 
     this.pcsc = pcsclite()
-    this.mode = MODE.PERSONAL
+    this.readMode = MODE.PERSONAL
+    this.autoRecreate = true
+
     this.emit(EVENTS.PCSC_INITIAL)
+
+    this.onReader = this.onReader.bind(this)
   }
 
-  setMode(mode) {
-    this.mode = mode
+  setReadMode(mode) {
+    this.readMode = mode
+  }
+
+  setAutoRecreate(isAutoRecreate) {
+    this.autoRecreate = isAutoRecreate
   }
 
   startListener() {
-    const _this = this
-    _this.pcsc.on('reader', reader => {
-      // Device ready to read
-      _this.emit(EVENTS.DEVICE_CONNECTED)
-      
-      reader.on('status', status => {
-        const changes = reader.state ^ status.state
-  
-        if(!changes) {
-          return
-        }
-  
-        if ((changes & reader.SCARD_STATE_EMPTY) && (status.state & reader.SCARD_STATE_EMPTY)) {
-          // Card remove
-          _this.emit(EVENTS.CARD_REMOVED)
+    this.pcsc.on('reader', this.onReader)
+    this.pcsc.on('error', (err) => {
 
-          reader.disconnect(reader.SCARD_LEAVE_CARD, err => {
-              if (err) {
-                  console.log(err)
-                  return
-              }
-          })
-        }
-        else if((changes & reader.SCARD_STATE_PRESENT) && (status.state & reader.SCARD_STATE_PRESENT)) {
-          // Card insert
-          _this.emit(EVENTS.CARD_INSERTED)
-          setTimeout(() => {
-            // Start reading data
-            _this.emit(EVENTS.READING_INIT)
-
-            reader.connect({ share_mode: reader.SCARD_SHARE_SHARED }, (err, protocol) => {
-              if(err) {
-                _this.emit(EVENTS.READING_FAIL, err)
-                return
-              }
-      
-              readData(reader, protocol, _this.mode === MODE.PERSONAL_PHOTO, (res) => {
-                switch(res.status) {
-                  case STATUS.START:
-                    _this.emit(EVENTS.READING_START)
-                    break
-                  case STATUS.READING:
-                    _this.emit(EVENTS.READING_PROGRESS, res.obj)
-                    break
-                  case STATUS.COMPLETE:
-                    _this.emit(EVENTS.READING_COMPLETE, res.obj)
-                    break
-                  case STATUS.ERROR:
-                    _this.emit(EVENTS.READING_FAIL, res.obj)
-                    break
-                }
-              })
-            })
-          }, 1000)
-        }
-      })
-  
-      reader.on('error', err => {
-        // Device error
-        _this.emit(EVENTS.DEVICE_ERROR, err)
-      })
-  
-      reader.on('end', () => {
-        // Device disconnect from host
-        _this.emit(EVENTS.DEVICE_DISCONNECTED)
-      })
+      // Recreate if device has been disconnected
+      if(this.autoRecreate) {
+        this.emit(EVENTS.DEVICE_WAITING, err)
+        
+        // Re-create
+        this.pcsc = pcsclite()
+        this.startListener()
+      }
+      else {
+        this.emit(EVENTS.PCSC_CLOSE)
+      }
     })
-  
-    _this.pcsc.on('error', (err) => {
-      // PCSC Error
-      _this.emit(EVENTS.PCSC_ERROR, err)
+  }
+
+  onReader(reader) {
+    // Device ready to read
+    this.emit(EVENTS.DEVICE_CONNECTED)
+    
+    reader.on('status', status => {
+      const changes = reader.state ^ status.state
+
+      if(!changes) {
+        return
+      }
+
+      if ((changes & reader.SCARD_STATE_EMPTY) && (status.state & reader.SCARD_STATE_EMPTY)) {
+        // Card remove
+        this.emit(EVENTS.CARD_REMOVED)
+
+        reader.disconnect(reader.SCARD_LEAVE_CARD, err => {
+            if (err) {
+                console.log(err)
+                return
+            }
+        })
+      }
+      else if((changes & reader.SCARD_STATE_PRESENT) && (status.state & reader.SCARD_STATE_PRESENT)) {
+        // Card insert
+        this.emit(EVENTS.CARD_INSERTED)
+        setTimeout(() => {
+          // Start reading data
+          this.emit(EVENTS.READING_INIT)
+
+          reader.connect({ share_mode: reader.SCARD_SHARE_SHARED }, (err, protocol) => {
+            if(err) {
+              this.emit(EVENTS.READING_FAIL, err)
+              return
+            }
+    
+            readData(reader, protocol, this.readMode === MODE.PERSONAL_PHOTO, (res) => {
+              switch(res.status) {
+                case STATUS.START:
+                  this.emit(EVENTS.READING_START)
+                  break
+                case STATUS.READING:
+                  this.emit(EVENTS.READING_PROGRESS, res.obj)
+                  break
+                case STATUS.COMPLETE:
+                  this.emit(EVENTS.READING_COMPLETE, res.obj)
+                  break
+                case STATUS.ERROR:
+                  this.emit(EVENTS.READING_FAIL, res.obj)
+                  break
+              }
+            })
+          })
+        }, 1000)
+      }
+    })
+
+    reader.on('error', err => {
+      // Device error
+      this.emit(EVENTS.DEVICE_ERROR, err)
+    })
+
+    reader.on('end', () => {
+      // Device disconnect from host
+      this.emit(EVENTS.DEVICE_DISCONNECTED)
     })
   }
 }
 
-module.exports = ThaiCardReader
+module.exports = {
+  default: ThaiCardReader,
+  ThaiCardReader,
+  EVENTS,
+  MODE,
+}

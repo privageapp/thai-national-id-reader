@@ -1,29 +1,34 @@
-const ThaiCardReader = require('./index')
+const { ThaiCardReader, EVENTS, MODE } = require('./index')
 
 const reader = new ThaiCardReader()
-reader.setMode(ThaiCardReader.MODE.PERSONAL_PHOTO)
+reader.readMode = MODE.PERSONAL_PHOTO
+reader.autoRecreate = true
 reader.startListener()
 
-reader.on(ThaiCardReader.EVENTS.CARD_INSERTED, () => {
+reader.on(EVENTS.CARD_INSERTED, () => {
   console.log('Card Inserted')
 })
 
-reader.on(ThaiCardReader.EVENTS.CARD_REMOVED, () => {
+reader.on(EVENTS.CARD_REMOVED, () => {
   console.log('Card Removed')
 })
 
-reader.on(ThaiCardReader.EVENTS.READING_INIT, () => {
+reader.on(EVENTS.READING_INIT, () => {
   console.log('Initial Reading')
 })
 
-reader.on(ThaiCardReader.EVENTS.READING_FAIL, () => {
+reader.on(EVENTS.READING_FAIL, () => {
   console.log('Reading Fail')
 })
 
-reader.on(ThaiCardReader.EVENTS.READING_PROGRESS, (progress) => {
+reader.on(EVENTS.READING_PROGRESS, (progress) => {
   console.log(progress)
 })
 
-reader.on(ThaiCardReader.EVENTS.READING_COMPLETE, (obj) => {
+reader.on(EVENTS.READING_COMPLETE, (obj) => {
   console.log(obj)
+})
+
+reader.on(EVENTS.DEVICE_DISCONNECTED, () => {
+  console.log('Device Disconnect')
 })
