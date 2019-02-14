@@ -2,7 +2,7 @@
 
 Thai National ID card reader for nodeJS. 
 
-[![npm version](https://badge.fury.io/js/thai-national-id-reader.svg)](https://badge.fury.io/js/thai-national-id-reader) ![MIT](https://img.shields.io/dub/l/vibe-d.svg)  
+[![npm version](https://badge.fury.io/js/%40privageapp%2Fthai-national-id-reader.svg)](https://badge.fury.io/js/%40privageapp%2Fthai-national-id-reader) ![MIT](https://img.shields.io/dub/l/vibe-d.svg)  
 
 Credits. ADPU Command from [ThaiNationalIDCard](https://github.com/chakphanu/ThaiNationalIDCard) and HexString convertion from [thai-smartcard-reader](https://github.com/aodstudio/thai-smartcard-reader/blob/master/src/index.js)
 
