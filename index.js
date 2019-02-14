@@ -1,6 +1,3 @@
-/*
-https://github.com/chakphanu/ThaiNationalIDCard
-*/
 const pcsclite = require('@pokusew/pcsclite')
 const { readData, STATUS } = require('./logics')
 const EventEmitter = require('events')
@@ -78,8 +75,7 @@ class ThaiCardReader extends EventEmitter {
 
             reader.connect({ share_mode: reader.SCARD_SHARE_SHARED }, (err, protocol) => {
               if(err) {
-                _this.emit(EVENTS.DEVICE_ERROR, err)
-                console.log(err)
+                _this.emit(EVENTS.READING_FAIL, err)
                 return
               }
       

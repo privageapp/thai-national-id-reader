@@ -1,16 +1,16 @@
 {
-  "name": "thai-card",
-  "version": "1.0.0",
-  "description": "",
+  "name": "thai-card-reader",
+  "version": "1.0.1",
+  "description": "Thai Personal ID Card reader.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node test.js",
     "start": "node index.js"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Privage App Co.,Ltd. <arm@privageapp.com>",
+  "license": "MIT",
   "dependencies": {
-    "@pokusew/pcsclite": "^0.5.1",
+    "pcsclite": "^0.5.0",
     "datauri": "^1.1.0"
   }
 }

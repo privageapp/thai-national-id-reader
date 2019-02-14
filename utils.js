@@ -1,9 +1,14 @@
-// This method from https://github.com/aodstudio/thai-smartcard-reader/blob/master/src/index.js
-const hex2string = (hexx) => {
-  let tempHexx = hexx
-  if (tempHexx.length > 4) tempHexx = tempHexx.slice(0, -4)
+/*
+
+Hex to String method
+https://github.com/aodstudio/thai-smartcard-reader/blob/master/src/index.js
+
+*/
+const hex2string = (input) => {
+  let tempHex = input
+  if (tempHex.length > 4) tempHex = tempHex.slice(0, -4)
   const patt = /^[a-zA-Z0-9&@.$%\-,():`# \/]+$/
-  const hex = tempHexx.toString()
+  const hex = tempHex.toString()
   let str = ''
   let tmp = ''
   for (let i = 0; i < hex.length; i += 2) {

@@ -1,7 +1,7 @@
 const ThaiCardReader = require('./index')
 
 const reader = new ThaiCardReader()
-reader.setMode(ThaiCardReader.MODE.PERSONAL)
+reader.setMode(ThaiCardReader.MODE.PERSONAL_PHOTO)
 reader.startListener()
 
 reader.on(ThaiCardReader.EVENTS.CARD_INSERTED, () => {

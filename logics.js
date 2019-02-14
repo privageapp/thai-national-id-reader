@@ -1,6 +1,3 @@
-/*
-https://github.com/chakphanu/ThaiNationalIDCard
-*/
 const utils = require('./utils')
 const DataURI = require('datauri')
 const adpu = require('./adpu')
