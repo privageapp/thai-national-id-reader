@@ -70,7 +70,7 @@ Emitted when a device prepare to reading data.
 ##### Event: READING_START
 Emitted when a device start to reading data.
 
-##### Event: READING_PROGRESS: 'READING_PROGRESS',
+##### Event: READING_PROGRESS
 Emitted while a device reading data. This event return progress.
 Returns `Object`:
 ```js
@@ -85,7 +85,8 @@ Returns `Object`:
 Emitted when a device finish reading data.
 Returns `Object`:
 ```js
-{ citizenId: '1999999999999',
+{ 
+  citizenId: '1999999999999',
   titleTH: 'นาย',
   firstNameTH: '',
   lastNameTH: '',
@@ -94,10 +95,10 @@ Returns `Object`:
   lastNameEN: '',
   birthday: '1900-01-01',
   gender: 'male',
-  address: 'User Address',
+  address: 'address',
   issue: '2000-01-01',
   expire: '2010-01-01',
-  photo: 'data:image/jpeg;....' // Image Data URI
+  photo: 'data:image/jpeg;....'
 }
 ```
 
