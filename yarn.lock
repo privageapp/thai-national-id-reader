@@ -8,10 +8,6 @@ bindings@^1.1.0:
   dependencies:
     file-uri-to-path "1.0.0"
 
-buffertools@^2.1.2:
-  version "2.1.6"
-  resolved "https://registry.yarnpkg.com/buffertools/-/buffertools-2.1.6.tgz#30c19b085636b88df692aeefeea0ff156780e916"
-
 datauri@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/datauri/-/datauri-1.1.0.tgz#c6184ff6b928ede4e41ccc23ab954c7839c4fb39"
@@ -32,17 +28,18 @@ mimer@^0.3.2:
   version "0.3.2"
   resolved "https://registry.yarnpkg.com/mimer/-/mimer-0.3.2.tgz#0b83aabdf48eaacfd2e093ed4c0ed3d38eda8073"
 
-nan@^2.2.1:
-  version "2.12.1"
-  resolved "https://registry.yarnpkg.com/nan/-/nan-2.12.1.tgz#7b1aa193e9aa86057e3c7bbd0ac448e770925552"
+nan@^2.14.0:
+  version "2.14.0"
+  resolved "https://registry.yarnpkg.com/nan/-/nan-2.14.0.tgz#7818f722027b2459a86f0295d434d1fc2336c52c"
+  integrity sha512-INOFj37C7k3AfaNTtX8RhsTw7qRy7eLET14cROi9+5HAVbbHuIWUHEauBv5qT4Av2tWasiTY1Jw6puUNqRJXQg==
 
-pcsclite@^0.5.0:
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/pcsclite/-/pcsclite-0.5.0.tgz#3bff94b8a84031735d0bf2cdb50b6f17c5a83e24"
+pcsclite@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/pcsclite/-/pcsclite-1.0.0.tgz#52c0b494ce33cc0488150684107c2017144039fc"
+  integrity sha512-hmn4qYxdqhI7ysutE9sPaHwOnMunNK3LxByv4HnuME95KOfCuAywyBjV0gSVkU8ZUxMV0Ug2Fs1nLdv2V9xThA==
   dependencies:
     bindings "^1.1.0"
-    buffertools "^2.1.2"
-    nan "^2.2.1"
+    nan "^2.14.0"
 
 semver@^5.5.0:
   version "5.6.0"
