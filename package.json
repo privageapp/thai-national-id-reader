@@ -1,6 +1,6 @@
 {
   "name": "@privageapp/thai-national-id-reader",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "Thai Personal ID Card reader for NodeJS (PCSClite)",
   "main": "index.js",
   "scripts": {
