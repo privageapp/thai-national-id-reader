@@ -19,6 +19,6 @@
   "homepage": "https://github.com/privageapp/thai-national-id-reader.git",
   "dependencies": {
     "pcsclite": "^1.0.0",
-    "datauri": "^1.1.0"
+    "datauri": "^4.1.0"
   }
 }
